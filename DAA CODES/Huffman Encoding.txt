@@ -1,0 +1,89 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+struct Node
+{
+    char data;
+    int frequency;
+
+    Node *left, *right;
+
+    Node(char d, int f)
+    {
+        data = d;
+        frequency = f;
+        left = right = NULL;
+    }
+};
+
+struct Compare
+{
+    bool operator()(Node* a, Node* b)
+    {
+        return a->frequency > b->frequency;
+    }
+};
+
+// Generate Huffman Codes
+void generateCodes(Node* root, string code)
+{
+    if (root == NULL)
+        return;
+
+    if (root->left == NULL && root->right == NULL)
+    {
+        cout << root->data << " : " << code << endl;
+        return;
+    }
+
+    generateCodes(root->left, code + "0");
+    generateCodes(root->right, code + "1");
+}
+
+int main()
+{
+    int n;
+
+    cout << "Enter number of characters: ";
+    cin >> n;
+
+    priority_queue<Node*, vector<Node*>, Compare> pq;
+
+    char ch;
+    int freq;
+
+    for (int i = 0; i < n; i++)
+    {
+        cout << "Enter character and frequency: ";
+        cin >> ch >> freq;
+
+        pq.push(new Node(ch, freq));
+    }
+
+    while (pq.size() > 1)
+    {
+        Node* left = pq.top();
+        pq.pop();
+
+        Node* right = pq.top();
+        pq.pop();
+
+        Node* parent = new Node(
+            '$',
+            left->frequency + right->frequency
+        );
+
+        parent->left = left;
+        parent->right = right;
+
+        pq.push(parent);
+    }
+
+    cout << "\nHuffman Codes:\n";
+
+    generateCodes(pq.top(), "");
+
+    return 0;
+}
