@@ -1,21 +1,22 @@
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract Bank {
-    mapping(address => uint) balanceOf;
 
-    function deposit() public payable {
-        require(msg.value > 0, "Deposit should be greater than zero.");
-        balanceOf[msg.sender] += msg.value;
+    mapping(address => uint256) balances;
+
+    function depositMoney(uint256 amount) public {
+        require(amount > 0, "Amount must be greater than 0");
+        balances[msg.sender] = balances[msg.sender] + amount;
     }
 
-    function withdraw() public {
-        require(balanceOf[msg.sender] > 0, "Your balance should be greater than zero.");
-        payable(msg.sender).transfer(balanceOf[msg.sender]);
-        balanceOf[msg.sender] = 0;
+    function withdrawMoney(uint256 amount) public {
+        require(amount <= balances[msg.sender], "Insufficient Balance");
+        balances[msg.sender] = balances[msg.sender] - amount;
     }
 
-    function showBalance() public view returns(uint) {
-        return balanceOf[msg.sender];
+    function showBalance() public view returns (uint256) {
+        return balances[msg.sender];
     }
 }
